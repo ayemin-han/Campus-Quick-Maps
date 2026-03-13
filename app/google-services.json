@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "122057874842",
+    "project_id": "campus-quick-maps-ed508",
+    "storage_bucket": "campus-quick-maps-ed508.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122057874842:android:fc2e8d5c80fef152e1ae23",
+        "android_client_info": {
+          "package_name": "com.amh.campusquickmaps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrNWTHdA9I5gggC9oUWjcTXuXTjRyL450"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
