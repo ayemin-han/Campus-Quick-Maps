@@ -32,8 +32,8 @@ const HomeScreen = () => {
         query: "2VWW+266, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
       },
       {
-        name: "C4",
-        query: "2VVV+QW3, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
+        name: "M Square",
+        query: "2VWR+854, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
       },
       {
         name: "S1 Building",
