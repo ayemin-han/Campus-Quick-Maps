@@ -1,14 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { WebView as NativeWebView } from "react-native-webview";
 import { RootStackParamList } from "../types/navigation";
-// WebView is only used on native platforms. On web we render a simple iframe instead.
-let NativeWebView: typeof import('react-native-webview').WebView | null = null;
-if (Platform.OS !== 'web') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  NativeWebView = require('react-native-webview').WebView;
-}
+
 const HomeScreen = () => {
  const navigation = useNavigation<HomeScreenNavigationProp>();
 
@@ -17,35 +14,70 @@ const HomeScreen = () => {
   "Home"
 >;
 
+  const [searchText, setSearchText] = useState("");
+  const [searchedQuery, setSearchedQuery] = useState("");
 
-  const mapHTML = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-          body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-          }
-          iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-          }
-        </style>
-      </head>
-      <body>
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3748.1311853978673!2d99.89177127523014!3d20.044947181369587!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30d700048c69def1%3A0xa20592e502bc20c9!2sMae%20Fah%20Luang%20University!5e0!3m2!1sen!2sth!4v1771480447514!5m2!1sen!2sth"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
-      </body>
-    </html>
-  `;
+  const places = useMemo(
+    () => [
+      {
+        name: "D1 Food Court",
+        query: "2VXV+2GF, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
+      },
+      {
+        name: "General Education Building C3",
+        query: "2VVW+M44, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
+      },
+      {
+        name: "General Education Building C1",
+        query: "2VWW+266, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
+      },
+      {
+        name: "C4",
+        query: "2VVV+QW3, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
+      },
+      {
+        name: "S1 Building",
+        query: "2VWV+8P9, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
+      },
+      {
+        name: "Registrar Division",
+        query: "2VWV+FC4, Tambon Nang Lae, Amphoe Mueang Chiang Rai, Chang Wat Chiang Rai 57100, Thailand",
+      },
+      {
+        name: "MFU Learning Space",
+        query: "Mae Fah Luang University, Thailand",
+      },
+    ],
+    []
+  );
+
+  const suggestions = useMemo(() => {
+    const lower = searchText.trim().toLowerCase();
+    if (!lower) {
+      return places;
+    }
+    return places.filter((place) =>
+      place.name.toLowerCase().includes(lower) || place.query.toLowerCase().includes(lower)
+    );
+  }, [places, searchText]);
+
+  const activePlace = useMemo(() => {
+    const lower = searchedQuery.trim().toLowerCase();
+    return (
+      places.find(
+        (place) =>
+          place.name.toLowerCase() === lower ||
+          place.query.toLowerCase() === lower ||
+          place.name.toLowerCase().startsWith(lower) ||
+          place.query.toLowerCase().includes(lower)
+      ) ?? null
+    );
+  }, [places, searchedQuery]);
+
+  const mapQuery = activePlace
+    ? `${activePlace.name} ${activePlace.query}`
+    : searchedQuery.trim() || "Mae Fah Luang University";
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=17&output=embed`;
 
   return (
     <View style={styles.container}>
@@ -62,25 +94,68 @@ const HomeScreen = () => {
       </View>
 
       {/* Search */}
-      <TextInput
-        placeholder="Search locations..."
-        style={styles.search}
-      />
+      <View style={styles.searchRow}>
+        <View style={styles.searchInputWrapper}>
+          <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
+          <TextInput
+            placeholder="Search locations..."
+            style={styles.search}
+            value={searchText}
+            onChangeText={setSearchText}
+            autoCapitalize="words"
+            returnKeyType="search"
+            onSubmitEditing={() => setSearchedQuery(searchText)}
+          />
+          {searchText.length > 0 && (
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={() => {
+                setSearchText("");
+                setSearchedQuery("");
+              }}
+            >
+              <MaterialIcons name="close" size={18} color="#888" />
+            </TouchableOpacity>
+          )}
+        </View>
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={() => setSearchedQuery(searchText)}
+        >
+          <MaterialIcons name="arrow-forward-ios" size={16} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      {suggestions.length > 0 && (
+        <View style={styles.suggestionsContainer}>
+          {suggestions.slice(0, 5).map((place) => (
+            <TouchableOpacity
+              key={place.name}
+              style={styles.suggestionButton}
+              onPress={() => {
+                setSearchText(place.name);
+                setSearchedQuery(place.name);
+              }}
+            >
+              <Text style={styles.suggestionText}>{place.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
 
       {/* Map */}
       <View style={styles.mapContainer}>
         {Platform.OS === 'web' ? (
           <iframe
             title="map"
-            srcDoc={mapHTML}
+            src={mapSrc}
             style={styles.map as any}
-            sandbox="allow-scripts allow-same-origin"
           />
         ) : (
           // @ts-expect-error: NativeWebView guaranteed non-null on native
           <NativeWebView
             originWhitelist={["*"]}
-            source={{ html: mapHTML }}
+            source={{ uri: mapSrc }}
             style={styles.map}
           />
         )}
@@ -118,14 +193,62 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
   },
-  search: {
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: 20,
-    height: 40,
+    marginBottom: 10,
+  },
+  searchInputWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
+    backgroundColor: "#fff",
     paddingHorizontal: 10,
+    height: 40,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  search: {
+    flex: 1,
+    height: "100%",
+    padding: 0,
+    color: "#000",
+  },
+  clearButton: {
+    padding: 6,
+    marginLeft: 6,
+  },
+  searchButton: {
+    marginLeft: 10,
+    backgroundColor: "#007AFF",
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  suggestionsContainer: {
+    marginHorizontal: 20,
     marginBottom: 10,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  suggestionButton: {
+    backgroundColor: "#f1f1f1",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  suggestionText: {
+    color: "#333",
+    fontWeight: "600",
   },
   mapContainer: {
     flex: 1,

@@ -43,11 +43,11 @@ const styles = StyleSheet.create({
 });
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const [email, setEmail] = useState<string>("");
+  const [studentId, setStudentId] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const handleLogin = () => {
-    if (email && password) {
+    if (studentId && password) {
       navigation.navigate("Home");
     }
   };
@@ -57,10 +57,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       <Text style={styles.title}>Campus Quick Maps</Text>
 
       <TextInput
-        placeholder="Email"
+        placeholder="Student ID"
         style={styles.input}
-        value={email}
-        onChangeText={setEmail}
+        value={studentId}
+        onChangeText={setStudentId}
       />
 
       <TextInput
