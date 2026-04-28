@@ -1,14 +1,16 @@
-import React from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
   Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+
   const handleLogout = () => {
     Alert.alert("Logout", "You have been logged out.");
   };
@@ -28,12 +30,11 @@ const ProfileScreen = () => {
       <Text style={styles.id}>Student ID: 6731503048</Text>
 
       {/* Buttons */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Edit Profile</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>App Settings</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.buttonText}>Go Back</Text>
       </TouchableOpacity>
 
       <TouchableOpacity

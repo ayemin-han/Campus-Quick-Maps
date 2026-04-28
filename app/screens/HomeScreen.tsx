@@ -1,7 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { WebView as NativeWebView } from "react-native-webview";
 import { RootStackParamList } from "../types/navigation";
@@ -20,10 +20,6 @@ const HomeScreen = () => {
   const places = useMemo(
     () => [
       {
-        name: "D1 Food Court",
-        query: "2VXV+2GF, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
-      },
-      {
         name: "General Education Building C3",
         query: "2VVW+M44, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
       },
@@ -40,12 +36,8 @@ const HomeScreen = () => {
         query: "2VWV+8P9, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
       },
       {
-        name: "Registrar Division",
-        query: "2VWV+FC4, Tambon Nang Lae, Amphoe Mueang Chiang Rai, Chang Wat Chiang Rai 57100, Thailand",
-      },
-      {
-        name: "MFU Learning Space",
-        query: "Mae Fah Luang University, Thailand",
+        name: "C5 Building",
+        query: "2VVW+429, Nang Lae, Mueang Chiang Rai District, Chiang Rai 57100, Thailand",
       },
     ],
     []
@@ -81,8 +73,15 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header with Profile Button */}
+      {/* Header with Back Button */}
       <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backBtn}
+        >
+          <MaterialIcons name="arrow-back-ios" size={20} color="#333" />
+        </TouchableOpacity>
+
         <Text style={styles.title}>Campus Quick Maps</Text>
 
         <TouchableOpacity
@@ -182,6 +181,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "bold",
+  },
+  backBtn: {
+    padding: 8,
   },
   profileBtn: {
     backgroundColor: "#007AFF",
