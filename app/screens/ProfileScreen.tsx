@@ -26,8 +26,6 @@ const ProfileScreen = () => {
       />
 
       {/* Name */}
-      <Text style={styles.name}>Mr. Aye Min Han</Text>
-      <Text style={styles.id}>Student ID: 6731503048</Text>
 
       {/* Buttons */}
       <TouchableOpacity
